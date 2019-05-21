@@ -28,20 +28,20 @@ export let dom = {
     },
     showBoards: function (boards) {
         // shows boards appending them to #boards div
-        // it adds necessary event listeners also
+        // it adds necessary event listeners also}
 
         let boardList = '';
 
         for(let board of boards){
             boardList += `
-                <li>${board.title}</li>
+                <div id="board-${board.id}">${board.title}</div>
             `;
         }
 
         const outerHtml = `
-            <ul class="board-container">
+            <div class="board-container">
                 ${boardList}
-            </ul>
+            </div>
         `;
 
         this._appendToElement(document.querySelector('#boards'), outerHtml);
