@@ -33,17 +33,21 @@ export let dom = {
         let boardList = '';
 
         for(let board of boards){
-            boardList += `
-                <div id="board-${board.id}">${board.title}</div>
+            boardList+= `<section class="board" id="board-${board.id}">
+            <div class="board-header"><span class="board-title">${board.title}</span>
+                <button class="board-add">Add Card</button>
+                <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            <div id="columns-${board.id}"></div></section>
             `;
         }
 
         const outerHtml = `
-            <div class="board-container">
+          <div class="board-container">  
                 ${boardList}
-            </div>
+          </div>
         `;
-
+        console.log(outerHtml);
         this._appendToElement(document.querySelector('#boards'), outerHtml);
     },
     loadCards: function (boardId) {
