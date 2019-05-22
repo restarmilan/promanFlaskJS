@@ -35,20 +35,18 @@ export let dom = {
         // it adds necessary event listeners also}
 
         let boardList = '';
-        let renameButtonList = [];
 
         for (let board of boards) {
             boardList += `
                 <section class="board">
-                    <div class="board-header"><span class="board-title">${board.title}</span>
+                    <div class="board-header"><span class="board-title" data-id="${boards.indexOf(board)}">${board.title}</span>
                         <button class="board-add">Add card</button>
-                        <button id="${board.title}">Rename board</button>
+                        <button class="renameButton" data-id="${boards.indexOf(board)}">Rename board</button>
                         <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                     </div>
                     <div class="board-columns" id="board-${board.id}"></div>
                 </section>
             `;
-            renameButtonList.push(`${board.title}`);
         }
 
         const outerHtml = `
@@ -57,24 +55,23 @@ export let dom = {
           </div>
         `;
         this._appendToElement(document.querySelector('#boards'), outerHtml);
-        dom.addEventListenerForRenameButtons(renameButtonList);
+        dom.addEventListenerForRenameButtons();
     },
-
-    addEventListenerForRenameButtons : function(renameButtonList){
-
-        for (let button of renameButtonList) {
-            let getEventToButton = document.getElementById(`${button}`);
-            getEventToButton.addEventListener('click', function () {
-                let result = prompt('You can change your boardname here: ');
-                let boards = document.getElementsByClassName('board-title');
-                for (let board of boards) {
-                    if (board.innerHTML === button) {
-                        board.innerHTML = result
-                    }
+        addEventListenerForRenameButtons : function(){
+        let boardNames = document.getElementsByClassName('board-title');
+        let renameButtons = document.getElementsByClassName('renameButton');
+        for (let board of boardNames) {
+            for (let buttons of renameButtons) {
+                if (board.dataset.id === buttons.dataset.id) {
+                    buttons.addEventListener('click', function () {
+                        let result = prompt('You can change your boardname here: ');
+                        board.innerHTML = result;
+                    })
                 }
-            });
+            }
         }
     },
+
     loadCards: function (boardId) {
 
         dataHandler.getCardsByBoardId(boardId, function (callback) {
