@@ -42,7 +42,8 @@ export let dom = {
                     <div class="board-header"><span class="board-title" data-id="${boards.indexOf(board)}">${board.title}</span>
                         <button class="board-add">Add card</button>
                         <button class="renameButton" data-id="${boards.indexOf(board)}">Rename board</button>
-                        <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
+                        <button class="board-toggle" id="toggle-board-${board.id}" ><i class="fas fa-chevron-down"></i></button>
+           
                     </div>
                     <div class="board-columns" id="board-${board.id}"></div>
                 </section>
@@ -55,9 +56,27 @@ export let dom = {
           </div>
         `;
         this._appendToElement(document.querySelector('#boards'), outerHtml);
+        dom.addEventListenerForToggleButtons(boards);
         dom.addEventListenerForRenameButtons();
     },
-        addEventListenerForRenameButtons : function(){
+    addEventListenerForToggleButtons: function (boards) {
+        for (let board of boards) {
+            document.getElementById('toggle-board-' + board.id).addEventListener("click", function () {
+                if (document.getElementsByClassName("card").length === 0) {
+                    dom.loadCards(board.id);
+                } else {
+                    dom.closeBoardContent(document.getElementsByClassName("board-column"));
+                }
+            });
+        }
+    },
+    closeBoardContent: function (elements) {
+        for (let elementIndex = elements.length - 1; elementIndex > -1; elementIndex--) {
+            elements[elementIndex].parentNode.removeChild(elements[elementIndex]);
+        }
+
+    },
+    addEventListenerForRenameButtons : function(){
         let boardNames = document.getElementsByClassName('board-title');
         let renameButtons = document.getElementsByClassName('renameButton');
         for (let board of boardNames) {
@@ -128,10 +147,13 @@ export let dom = {
             `;
         return column;
     },
-    renameBoardName: function () {
-        let board = document.getElementById('Board-1');
-        board.addEventListener('click', function () {
-            alert('JEEEJJ');
-        })
+    addEventListenerForAddBoardButton: function () {
+        document.getElementById("add-board").addEventListener("click", function () {
+            dataHandler.createNewBoard(prompt("Enter board name !"), function (callback) {
+                console.log('added '+callback);
+                dom.loadBoards();
+            });
+        });
+
     }
 };

@@ -21,6 +21,11 @@ def _read_csv(file_name):
         return formatted_data
 
 
+def _write_csv(filename, new_line):
+    file = open(filename, 'a')
+    file.write(new_line)
+
+
 def _get_data(data_type, file, force):
     """
     Reads defined type of data from file or cache
@@ -32,6 +37,12 @@ def _get_data(data_type, file, force):
     if force or data_type not in _cache:
         _cache[data_type] = _read_csv(file)
     return _cache[data_type]
+
+
+def save_new_board(id, title):
+    new_line = f"{id},{title}\n"
+    _write_csv(BOARDS_FILE, new_line)
+    return get_boards()
 
 
 def clear_cache():

@@ -11,6 +11,13 @@ def get_card_status(status_id):
     return next((status['title'] for status in statuses if status['id'] == str(status_id)), 'Unknown')
 
 
+def save_new_board(title):
+    boards = persistence.get_boards()
+    last_board_id = boards[-1]["id"]
+    new_id = int(last_board_id) + 1
+    return persistence.save_new_board(new_id, title)
+
+
 def get_boards():
     """
     Gather all boards
@@ -28,4 +35,3 @@ def get_cards_for_board(board_id):
             card['status_id'] = get_card_status(card['status_id'])  # Set textual status for the card
             matching_cards.append(card)
     return matching_cards
-
