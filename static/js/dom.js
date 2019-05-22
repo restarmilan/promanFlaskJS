@@ -32,7 +32,7 @@ export let dom = {
     },
     showBoards: function (boards) {
         // shows boards appending them to #boards div
-        // it adds necessary event listeners also
+        // it adds necessary event listeners also}
 
         let boardList = '';
 
@@ -43,11 +43,11 @@ export let dom = {
         }
 
         const outerHtml = `
-            <div class="board-container">
+          <div class="board-container">  
                 ${boardList}
-            </div>
+          </div>
         `;
-
+        console.log(outerHtml);
         this._appendToElement(document.querySelector('#boards'), outerHtml);
     },
     loadCards: function (boardId) {
