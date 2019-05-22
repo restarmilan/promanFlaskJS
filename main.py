@@ -45,6 +45,18 @@ def save_new_board(title):
     return data_handler.save_new_board(title)
 
 
+@app.route("/save-new-card/<card_title>/<board_id>/<status_id>")
+@json_response
+def save_new_card(card_title, board_id, status_id):
+    return data_handler.save_new_card(card_title, board_id, status_id)
+
+
+@app.route("/remove-card/<card_id>")
+@json_response
+def remove_card(card_id):
+    return data_handler.remove_card(card_id)
+
+
 def main():
     app.run(debug=True)
 

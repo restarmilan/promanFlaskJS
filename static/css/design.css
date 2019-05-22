@@ -68,7 +68,7 @@ section.board{
     flex-wrap: nowrap;
 }
 
-.board-column{
+#board-column{
     padding: 10px;
     flex: 1;
 }
@@ -98,19 +98,19 @@ section.board{
     padding: 4px;
 }
 
-.board-column:nth-of-type(1) .card{
+#board-column:nth-of-type(1) .card{
     background: var(--status-1);
 }
 
-.board-column:nth-of-type(2) .card{
+#board-column:nth-of-type(2) .card{
     background: var(--status-2);
 }
 
-.board-column:nth-of-type(3) .card{
+#board-column:nth-of-type(3) .card{
     background: var(--status-3);
 }
 
-.board-column:nth-of-type(4) .card{
+#board-column:nth-of-type(4) .card{
     background: var(--status-4);
 }
 
