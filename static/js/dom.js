@@ -38,7 +38,13 @@ export let dom = {
 
         for (let board of boards) {
             boardList += `
-                <div id="board-${board.id}">${board.title}</div>
+                <section class="board">
+                    <div class="board-header"><span class="board-title">${board.title}</span>
+                        <button class="board-add">Add card</button>
+                        <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
+                    </div>
+                    <div class="board-columns" id="board-${board.id}"></div>
+                </section>
             `;
         }
 
@@ -60,26 +66,18 @@ export let dom = {
     showCards: function (cards) {
         // shows the cards of a board
         // it adds necessary event listeners also
-        let newCards = dom.sortByID(cards,"new");
-        let inProgressCards = dom.sortByID(cards, "in progress");
+        let newCards = dom.sortByID(cards, "new");
+        let inProgressCards = dom.sortByID(cards, "in-progress");
         let testingCards = dom.sortByID(cards, "testing");
         let doneCards = dom.sortByID(cards, "done");
-        let boardID = '#board-' + cards[0]['board_id'];
+        let boardID = 'board-' + cards[0]['board_id'];
         const outerHtml = `
-            <div id="new">
-                ${newCards}
-            </div>
-            <div id="in-progress">
-                ${inProgressCards}
-            </div>
-            <div id="testing">
-                ${testingCards}
-            </div>
-            <div id="done">
-                ${doneCards}
-            </div>
+            ${dom.sortColumnsByID(newCards, "new")}
+            ${dom.sortColumnsByID(inProgressCards, "in-progress")}
+            ${dom.sortColumnsByID(testingCards, "testing")}
+            ${dom.sortColumnsByID(doneCards, "done")}
         `;
-        this._appendToElement(document.querySelector(boardID), outerHtml);
+        this._appendToElement(document.getElementById(boardID), outerHtml);
         // here comes more features
     },
     sortByID: function (cards, status_id) {
@@ -87,10 +85,24 @@ export let dom = {
         for (let card of cards) {
             if (card.status_id === status_id) {
                 cardsByID += `
-                    <div card-id="${card.id}" board-id="${card.board_id}" status-id='${card.status_id}'>${card.title}</div>
+                    <div class="card" card-id="${card.id}" board-id="${card.board_id}" status-id='${card.status_id}'>
+                        <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
+                        <div class="board-title">${card.title}</div>              
+                    </div>
                 `;
             }
         }
         return cardsByID;
+    },
+    sortColumnsByID: function (content, status) {
+        let column = `
+            <div class="board-column" id="${status}">
+                <div class="board-title">${status}</div>
+                <div class="board-column-content">
+                    ${content}
+                </div>
+            </div>
+            `;
+        return column;
     }
 };
