@@ -39,9 +39,11 @@ export let dom = {
         for (let board of boards) {
             boardList += `
                 <section class="board">
-                    <div class="board-header"><span class="board-title">${board.title}</span>
+                    <div class="board-header"><span class="board-title" data-id="${boards.indexOf(board)}">${board.title}</span>
                         <button class="board-add">Add card</button>
+                        <button class="renameButton" data-id="${boards.indexOf(board)}">Rename board</button>
                         <button class="board-toggle" id="toggle-board-${board.id}" ><i class="fas fa-chevron-down"></i></button>
+           
                     </div>
                     <div class="board-columns" id="board-${board.id}"></div>
                 </section>
@@ -55,6 +57,7 @@ export let dom = {
         `;
         this._appendToElement(document.querySelector('#boards'), outerHtml);
         dom.addEventListenerForToggleButtons(boards);
+        dom.addEventListenerForRenameButtons();
     },
     addEventListenerForToggleButtons: function (boards) {
         for (let board of boards) {
@@ -71,7 +74,23 @@ export let dom = {
         for (let elementIndex = elements.length - 1; elementIndex > -1; elementIndex--) {
             elements[elementIndex].parentNode.removeChild(elements[elementIndex]);
         }
+
     },
+    addEventListenerForRenameButtons : function(){
+        let boardNames = document.getElementsByClassName('board-title');
+        let renameButtons = document.getElementsByClassName('renameButton');
+        for (let board of boardNames) {
+            for (let buttons of renameButtons) {
+                if (board.dataset.id === buttons.dataset.id) {
+                    buttons.addEventListener('click', function () {
+                        let result = prompt('You can change your boardname here: ');
+                        board.innerHTML = result;
+                    })
+                }
+            }
+        }
+    },
+
     loadCards: function (boardId) {
 
         dataHandler.getCardsByBoardId(boardId, function (callback) {
@@ -88,12 +107,19 @@ export let dom = {
         let doneCards = dom.sortByID(cards, "done");
         let boardID = 'board-' + cards[0]['board_id'];
         const outerHtml = `
-            ${dom.sortColumnsByID(newCards, "new")}
-            ${dom.sortColumnsByID(inProgressCards, "in-progress")}
-            ${dom.sortColumnsByID(testingCards, "testing")}
-            ${dom.sortColumnsByID(doneCards, "done")}
+            ${dom.sortColumnsByID(newCards, "new", cards[0]['board_id'])}
+            ${dom.sortColumnsByID(inProgressCards, "in-progress", cards[0]['board_id'])}
+            ${dom.sortColumnsByID(testingCards, "testing", cards[0]['board_id'])}
+            ${dom.sortColumnsByID(doneCards, "done", cards[0]['board_id'])}
         `;
         this._appendToElement(document.getElementById(boardID), outerHtml);
+        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)])
+        drake.on('drop', function (el, target, source, sibling) {
+            //call your function here
+            console.log(el.attributes.statusid.value);
+            console.log(target.id.substring(2));
+            el.setAttribute('statusId', target.id.substring(2))
+        })
         // here comes more features
     },
     sortByID: function (cards, status_id) {
@@ -101,7 +127,7 @@ export let dom = {
         for (let card of cards) {
             if (card.status_id === status_id) {
                 cardsByID += `
-                    <div class="card" card-id="${card.id}" board-id="${card.board_id}" status-id='${card.status_id}'>
+                    <div class="card" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
                         <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
                         <div class="board-title">${card.title}</div>              
                     </div>
@@ -110,11 +136,11 @@ export let dom = {
         }
         return cardsByID;
     },
-    sortColumnsByID: function (content, status) {
+    sortColumnsByID: function (content, status, boardId) {
         let column = `
-            <div class="board-column" id="${status}">
+            <div class="board-column" >
                 <div class="board-title">${status}</div>
-                <div class="board-column-content">
+                <div class="board-column-content" id="${boardId}-${status}">
                     ${content}
                 </div>
             </div>
@@ -128,5 +154,6 @@ export let dom = {
                 dom.loadBoards();
             });
         });
+
     }
 };
