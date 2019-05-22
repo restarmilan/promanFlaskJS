@@ -23,12 +23,15 @@ export let dom = {
     loadBoards: function () {
         // retrieves boards and makes showBoards called
         dataHandler.getBoards(function (boards) {
-            dom.clearContent();
+            dom.clearContent('boards');
             dom.showBoards(boards);
         });
     },
-    clearContent: function () {
-        document.getElementById('boards').textContent = '';
+    clearContent: function (elementID) {
+        document.getElementById(elementID).textContent = '';
+    },
+    removeCard: function (element) {
+        element.parentNode.removeChild(element);
     },
     showBoards: function (boards) {
         // shows boards appending them to #boards div
@@ -40,7 +43,7 @@ export let dom = {
             boardList += `
                 <section class="board">
                     <div class="board-header"><span class="board-title" data-id="${boards.indexOf(board)}">${board.title}</span>
-                        <button class="board-add">Add card</button>
+                        <button class="board-add" id="add-to-board-${board.id}">Add card</button>
                         <button class="renameButton" data-id="${boards.indexOf(board)}">Rename board</button>
                         <button class="board-toggle" id="toggle-board-${board.id}" ><i class="fas fa-chevron-down"></i></button>
            
@@ -57,26 +60,35 @@ export let dom = {
         `;
         this._appendToElement(document.querySelector('#boards'), outerHtml);
         dom.addEventListenerForToggleButtons(boards);
+        dom.addEventListenerForAddCardButton(boards);
         dom.addEventListenerForRenameButtons();
+    },
+    addEventListenerForAddCardButton: function (boards) {
+        for (let board of boards) {
+            document.getElementById('add-to-board-' + board.id).addEventListener("click", function () {
+                dataHandler.createNewCard(prompt('Please enter card title !'), board.id, "0", function () {
+                    dom.loadCards(board.id);
+                })
+            });
+        }
     },
     addEventListenerForToggleButtons: function (boards) {
         for (let board of boards) {
             document.getElementById('toggle-board-' + board.id).addEventListener("click", function () {
-                if (document.getElementsByClassName("card").length === 0) {
+                if (document.getElementById("board-" + board.id).firstChild === null) {
                     dom.loadCards(board.id);
                 } else {
-                    dom.closeBoardContent(document.getElementsByClassName("board-column"));
+                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id), document.getElementById("board-" + board.id));
                 }
             });
         }
     },
-    closeBoardContent: function (elements) {
+    closeBoardContent: function (elements, parent) {
         for (let elementIndex = elements.length - 1; elementIndex > -1; elementIndex--) {
-            elements[elementIndex].parentNode.removeChild(elements[elementIndex]);
+            parent.removeChild(elements[elementIndex]);
         }
-
     },
-    addEventListenerForRenameButtons : function(){
+    addEventListenerForRenameButtons: function () {
         let boardNames = document.getElementsByClassName('board-title');
         let renameButtons = document.getElementsByClassName('renameButton');
         for (let board of boardNames) {
@@ -90,10 +102,10 @@ export let dom = {
             }
         }
     },
-
     loadCards: function (boardId) {
 
         dataHandler.getCardsByBoardId(boardId, function (callback) {
+            dom.clearContent('board-' + boardId);
             dom.showCards(callback);
         });
         // retrieves cards and makes showCards called
@@ -105,30 +117,44 @@ export let dom = {
         let inProgressCards = dom.sortByID(cards, "in-progress");
         let testingCards = dom.sortByID(cards, "testing");
         let doneCards = dom.sortByID(cards, "done");
-        let boardID = 'board-' + cards[0]['board_id'];
+        let boardNumber = cards[0]['board_id'];
+        let boardID = 'board-' + boardNumber;
         const outerHtml = `
-            ${dom.sortColumnsByID(newCards, "new", cards[0]['board_id'])}
-            ${dom.sortColumnsByID(inProgressCards, "in-progress", cards[0]['board_id'])}
-            ${dom.sortColumnsByID(testingCards, "testing", cards[0]['board_id'])}
-            ${dom.sortColumnsByID(doneCards, "done", cards[0]['board_id'])}
+            ${dom.sortColumnsByID(newCards, "new", boardNumber)}
+            ${dom.sortColumnsByID(inProgressCards, "in-progress", boardNumber)}
+            ${dom.sortColumnsByID(testingCards, "testing", boardNumber)}
+            ${dom.sortColumnsByID(doneCards, "done", boardNumber)}
         `;
         this._appendToElement(document.getElementById(boardID), outerHtml);
-        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)])
+        dom.addEventListenerForRemoveButton(cards);
+        dom.addDragula(cards);
+
+    },
+    addDragula: function (cards) {
+        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)]);
         drake.on('drop', function (el, target, source, sibling) {
             //call your function here
             console.log(el.attributes.statusid.value);
             console.log(target.id.substring(2));
-            el.setAttribute('statusId', target.id.substring(2))
-        })
-        // here comes more features
+            el.setAttribute('statusId', target.id.substring(2));
+        });
+    },
+    addEventListenerForRemoveButton: function (cards) {
+        for (let card of cards) {
+            document.getElementById('remove-card-' + card.id).addEventListener("click", function () {
+                dataHandler.removeCard(card.id, function () {
+                    dom.loadCards(card.board_id);
+                });
+            });
+        }
     },
     sortByID: function (cards, status_id) {
         let cardsByID = '';
         for (let card of cards) {
             if (card.status_id === status_id) {
                 cardsByID += `
-                    <div class="card" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
-                        <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
+                    <div class="card" id="board-${card.board_id}-card-${card.id}" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
+                        <div class="card-remove" id="remove-card-${card.id}"><i class="fas fa-trash-alt"></i></div>
                         <div class="board-title">${card.title}</div>              
                     </div>
                 `;
@@ -136,21 +162,19 @@ export let dom = {
         }
         return cardsByID;
     },
-    sortColumnsByID: function (content, status, boardId) {
-        let column = `
-            <div class="board-column" >
+    sortColumnsByID: function (content, status, boardID) {
+        return `
+            <div class="board-column-${boardID}" id="board-column" >
                 <div class="board-title">${status}</div>
-                <div class="board-column-content" id="${boardId}-${status}">
+                <div class="board-column-content" id="${boardID}-${status}">
                     ${content}
                 </div>
             </div>
             `;
-        return column;
     },
     addEventListenerForAddBoardButton: function () {
         document.getElementById("add-board").addEventListener("click", function () {
-            dataHandler.createNewBoard(prompt("Enter board name !"), function (callback) {
-                console.log('added '+callback);
+            dataHandler.createNewBoard(prompt("Enter board name !"), function () {
                 dom.loadBoards();
             });
         });
