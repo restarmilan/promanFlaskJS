@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, json ,jsonify
 from util import json_response
 
 import data_handler
@@ -37,6 +37,13 @@ def get_cards_for_board(board_id: int):
 @json_response
 def get_card_status(status_id: int):
     return data_handler.get_card_status(status_id)
+
+
+@app.route("/save-card-data", methods=['GET', 'POST'])
+def save_card_data():
+    card_data = request.json['saveData']
+    data_handler.save_card_changes(card_data)
+    return jsonify(True)
 
 
 def main():

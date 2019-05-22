@@ -29,3 +29,6 @@ def get_cards_for_board(board_id):
             matching_cards.append(card)
     return matching_cards
 
+
+def save_card_changes(card_data):
+    pass

@@ -19,6 +19,19 @@ export let dataHandler = {
     _api_post: function (url, data, callback) {
         // it is not called from outside
         // sends the data to the API, and calls callback function
+        fetch(url, {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        credentials: 'same-origin', // include, *same-origin, omit
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+        .then(response => response.json())
+        .then(json_response => callback(json_response))
     },
     init: function () {
 
@@ -61,6 +74,23 @@ export let dataHandler = {
     },
     createNewCard: function (cardTitle, boardId, statusId, callback) {
         // creates new card, saves it and calls the callback function with its data
-    }
+    },
+    saveData: function() {
+        let saveData = [];
+        let columns = document.querySelectorAll('.board-column-content');
+        for (let column of columns) {
+            let cards = column.children;
+            for (let card of cards){
+                let cardAttributes = card.attributes;
+                //console.log(card.children[1]);
+                let cardData = {id: cardAttributes.cardid.value, title: card.children[1].textContent, status_id: cardAttributes.statusid.value,}
+                saveData.push(cardData)
+
+            }
+        }
+        let sendData = {'saveData': saveData};
+        console.log(sendData);
+        dataHandler._api_post('/save-card-data', sendData, function(response){console.log(response)})
+    },
     // here comes more features
 };

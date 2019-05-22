@@ -18,6 +18,7 @@ export let dom = {
         return elementToExtend.lastChild;
     },
     init: function () {
+
         // This function should run once, when the page is loaded.
     },
     loadBoards: function () {
@@ -78,13 +79,7 @@ export let dom = {
             ${dom.sortColumnsByID(doneCards, "done", cards[0]['board_id'])}
         `;
         this._appendToElement(document.getElementById(boardID), outerHtml);
-        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)])
-        drake.on('drop', function (el, target, source, sibling) {
-            //call your function here
-            console.log(el.attributes.statusid.value);
-            console.log(target.id.substring(2));
-            el.setAttribute('statusId', target.id.substring(2))
-        })
+        this.createDragula(cards)
         // here comes more features
     },
     sortByID: function (cards, status_id) {
@@ -92,7 +87,7 @@ export let dom = {
         for (let card of cards) {
             if (card.status_id === status_id) {
                 cardsByID += `
-                    <div class="card" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
+                    <div class="card" cardId="${card.id}" statusId='${card.status_id}'>
                         <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
                         <div class="board-title">${card.title}</div>              
                     </div>
@@ -111,5 +106,15 @@ export let dom = {
             </div>
             `;
         return column;
+    },
+    createDragula: function (cards) {
+        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)])
+        drake.on('drop', function (el, target, source, sibling) {
+            //call your function here
+            console.log(el.attributes.statusid.value);
+            console.log(target.id.substring(2));
+            el.setAttribute('statusId', target.id.substring(2))
+        })
     }
+
 };
