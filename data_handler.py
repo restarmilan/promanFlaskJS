@@ -71,6 +71,7 @@ def update_card_changes(cards_data):
     existing_cards = persistence.get_cards(force=True)
     statuses = persistence.get_statuses(force=True)
     formated_card_data = _formate_card_data(cards_data, statuses)
+    print(formated_card_data)
     for card in formated_card_data:
         for index, existing_card in enumerate(existing_cards):
             if card['id'] == existing_card['id']:

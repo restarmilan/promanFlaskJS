@@ -96,8 +96,7 @@ export let dom = {
             for (let buttons of renameButtons) {
                 if (board.dataset.id === buttons.dataset.id) {
                     buttons.addEventListener('click', function () {
-                        let result = prompt('You can change your boardname here: ');
-                        board.innerHTML = result;
+                        board.textContent = prompt('You can change your boardname here: ');
                     })
                 }
             }
@@ -127,10 +126,12 @@ export let dom = {
             ${dom.sortColumnsByID(doneCards, "done", boardNumber)}
         `;
         this._appendToElement(document.getElementById(boardID), outerHtml);
+        dom.addEventListenerForRenameCardButtons();
 
         this.createDragula(cards)
         // here comes more features
         dom.addEventListenerForRemoveButton(cards);
+
 
     },
     addEventListenerForRemoveButton: function (cards) {
@@ -149,7 +150,8 @@ export let dom = {
                 cardsByID += `
                     <div class="card" id="board-${card.board_id}-card-${card.id}" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
                         <div class="card-remove" id="remove-card-${card.id}"><i class="fas fa-trash-alt"></i></div>
-                        <div class="board-title">${card.title}</div>              
+                        <div class ="card-rename" data-cardid="${cards.indexOf(card)}"><i class="fas fa-pen"></i></div>
+                        <div class="board-title" data-cardid="${cards.indexOf(card)}">${card.title}</div>              
                     </div>
                 `;
             }
@@ -184,4 +186,21 @@ export let dom = {
         });
 
     },
+    addEventListenerForRenameCardButtons : function(){
+        let cardNames = document.getElementsByClassName('board-title');
+        let renameCardButtons = document.getElementsByClassName('card-rename');
+        for (let card of cardNames) {
+            for (let button of renameCardButtons) {
+                if (card.dataset.cardid === button.dataset.cardid) {
+                    button.addEventListener('click', function () {
+                    card.textContent = prompt('You can change your cardname here: ');
+                    dataHandler.saveCardData()
+
+                    })
+                }
+            }
+        }
+    },
 };
+
+

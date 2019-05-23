@@ -96,8 +96,8 @@ export let dataHandler = {
             let cards = column.children;
             for (let card of cards){
                 let cardAttributes = card.attributes;
-                //console.log(card.children[1]);
-                let cardData = {id: cardAttributes.cardid.value, title: card.children[1].textContent, status_id: cardAttributes.statusid.value,}
+                console.log(card.children[1]);
+                let cardData = {id: cardAttributes.cardid.value, title: card.children[2].textContent, status_id: cardAttributes.statusid.value,}
                 saveData.push(cardData)
 
             }
