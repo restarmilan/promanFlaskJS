@@ -51,7 +51,6 @@ def save_card_data():
     card_data = request.json['saveData']
     print(card_data)
     data_handler.update_card_changes(card_data)
-    return True
 
   
 @app.route("/save-new-card/<card_title>/<board_id>/<status_id>")
@@ -65,6 +64,13 @@ def save_new_card(card_title, board_id, status_id):
 def remove_card(card_id):
     return data_handler.remove_card(card_id)
 
+
+@app.route('/update-board-name', methods=['GET', 'POST'])
+@json_response
+def update_board_name():
+    data = request.json['data']
+    print(data)
+    data_handler.update_board_name(data)
 
 
 def main():

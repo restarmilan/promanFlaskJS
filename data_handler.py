@@ -88,3 +88,7 @@ def _formate_card_data(cards_data, statuses):
                 card['status_id'] = status['id']
                 formated_card_data.append(card)
     return formated_card_data
+
+
+def update_board_name(data):
+    persistence.update_board_file(data)
