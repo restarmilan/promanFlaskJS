@@ -106,6 +106,9 @@ export let dataHandler = {
         console.log(sendData);
         dataHandler._api_post('/save-card-data', sendData, function(response){console.log(response)})
     },
+    updateBoardName: function(data){
+        this._api_post('/update-board-name',data,function(responseData){ console.log(responseData)})
+    }
 
     // here comes more features
 };

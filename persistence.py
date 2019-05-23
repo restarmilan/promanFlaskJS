@@ -90,3 +90,12 @@ def get_cards(force=False):
 
 def update_server_side_data(updated_data):
     _write_whole_csv(CARDS_FILE, updated_data)
+
+
+def update_board_file(data):
+    existing_boards = get_boards(force=True)
+    for board in existing_boards:
+        print(board)
+        if data['id'] == board['id']:
+            board['title'] = data["title"]
+    _write_whole_csv(BOARDS_FILE, existing_boards)

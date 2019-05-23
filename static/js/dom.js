@@ -42,7 +42,7 @@ export let dom = {
         for (let board of boards) {
             boardList += `
                 <section class="board">
-                    <div class="board-header"><span class="board-title" data-id="${boards.indexOf(board)}">${board.title}</span>
+                    <div class="board-header"><span id="${board.id}" class="board-title" data-id="${boards.indexOf(board)}">${board.title}</span>
                         <button class="board-add" id="add-to-board-${board.id}">Add card</button>
                         <button class="renameButton" data-id="${boards.indexOf(board)}">Rename board</button>
                         <button class="board-toggle" id="toggle-board-${board.id}" ><i class="fas fa-chevron-down"></i></button>
@@ -62,7 +62,7 @@ export let dom = {
         this._appendToElement(document.querySelector('#boards'), outerHtml);
         dom.addEventListenerForToggleButtons(boards);
         dom.addEventListenerForAddCardButton(boards);
-        dom.addEventListenerForRenameButtons();
+        dom.addEventListenerForRenameBoard();
     },
     addEventListenerForAddCardButton: function (boards) {
         for (let board of boards) {
@@ -89,7 +89,7 @@ export let dom = {
             parent.removeChild(elements[elementIndex]);
         }
     },
-    addEventListenerForRenameButtons: function () {
+    addEventListenerForRenameBoard: function () {
         let boardNames = document.getElementsByClassName('board-title');
         let renameButtons = document.getElementsByClassName('renameButton');
         for (let board of boardNames) {
@@ -97,6 +97,9 @@ export let dom = {
                 if (board.dataset.id === buttons.dataset.id) {
                     buttons.addEventListener('click', function () {
                         board.textContent = prompt('You can change your boardname here: ');
+                        console.log(board);
+                        let data = {data: {id: board.id, title: board.textContent}}
+                        dataHandler.updateBoardName(data)
                     })
                 }
             }
