@@ -26,6 +26,18 @@ def _write_csv(filename, new_line):
     file.write(new_line)
 
 
+def _write_whole_csv(filename, data):
+    dataheader = []
+    for keys in data[0]:
+        dataheader.append(keys)
+    print(dataheader)
+    with open(filename, 'w') as file:
+        writer = csv.DictWriter(file, fieldnames=dataheader, delimiter=',', quotechar='"')
+        writer.writeheader()
+        for item in data:
+            writer.writerow(item)
+
+
 def _get_data(data_type, file, force):
     """
     Reads defined type of data from file or cache
@@ -62,3 +74,5 @@ def get_cards(force=False):
     return _get_data('cards', CARDS_FILE, force)
 
 
+def update_server_side_data(updated_data):
+    _write_whole_csv(CARDS_FILE, updated_data)

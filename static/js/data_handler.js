@@ -79,7 +79,7 @@ export let dataHandler = {
     createNewCard: function (cardTitle, boardId, statusId, callback) {
         // creates new card, saves it and calls the callback function with its data
     },
-    saveData: function() {
+    saveCardData: function() {
         let saveData = [];
         let columns = document.querySelectorAll('.board-column-content');
         for (let column of columns) {

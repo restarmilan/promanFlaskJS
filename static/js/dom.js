@@ -148,8 +148,8 @@ export let dom = {
             //call your function here
             console.log(el.attributes.statusid.value);
             console.log(target.id.substring(2));
-            el.setAttribute('statusId', target.id.substring(2))
-            dataHandler.saveData()
+            el.setAttribute('statusId', target.id.substring(2));
+            dataHandler.saveCardData()
         })
     },
     addEventListenerForAddBoardButton: function () {

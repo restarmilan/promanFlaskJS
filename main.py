@@ -49,7 +49,7 @@ def save_new_board(title):
 @json_response
 def save_card_data():
     card_data = request.json['saveData']
-    data_handler.save_card_changes(card_data)
+    data_handler.update_card_changes(card_data)
     return True
 
 
