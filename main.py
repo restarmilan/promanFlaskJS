@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from util import json_response
 
 import data_handler
@@ -31,6 +31,46 @@ def get_cards_for_board(board_id: int):
     :param board_id: id of the parent board
     """
     return data_handler.get_cards_for_board(board_id)
+
+
+@app.route("/get-card-status/<int:status_id>")
+@json_response
+def get_card_status(status_id: int):
+    return data_handler.get_card_status(status_id)
+
+
+@app.route("/save-new-board/<title>")
+@json_response
+def save_new_board(title):
+    return data_handler.save_new_board(title)
+
+
+@app.route("/save-card-data", methods=['GET', 'POST'])
+@json_response
+def save_card_data():
+    card_data = request.json['saveData']
+    print(card_data)
+    data_handler.update_card_changes(card_data)
+
+  
+@app.route("/save-new-card/<card_title>/<board_id>/<status_id>")
+@json_response
+def save_new_card(card_title, board_id, status_id):
+    return data_handler.save_new_card(card_title, board_id, status_id)
+
+
+@app.route("/remove-card/<card_id>")
+@json_response
+def remove_card(card_id):
+    return data_handler.remove_card(card_id)
+
+
+@app.route('/update-board-name', methods=['GET', 'POST'])
+@json_response
+def update_board_name():
+    data = request.json['data']
+    print(data)
+    data_handler.update_board_name(data)
 
 
 def main():
