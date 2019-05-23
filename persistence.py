@@ -21,8 +21,8 @@ def _read_csv(file_name):
         return formatted_data
 
 
-def _write_csv(filename, new_line):
-    file = open(filename, 'a')
+def _write_csv(filename, new_line, write_mode='a'):
+    file = open(filename, write_mode)
     file.write(new_line)
 
 
@@ -55,6 +55,20 @@ def save_new_board(id, title):
     new_line = f"{id},{title}\n"
     _write_csv(BOARDS_FILE, new_line)
     return get_boards()
+
+
+def save_new_card(new_id, card_title, board_id, status_id):
+    new_line = f"{new_id},{board_id},{card_title},{status_id},0\n"
+    _write_csv(CARDS_FILE, new_line)
+    return get_cards()
+
+
+def remove_card(cards, write_mode):
+    new_data = 'id,board_id,title,status_id,order\n'
+    for card in cards:
+        new_data += f"{card['id']},{card['board_id']},{card['title']},{card['status_id']},{card['order']}\n"
+    _write_csv(CARDS_FILE, new_data, write_mode)
+    return get_cards()
 
 
 def clear_cache():

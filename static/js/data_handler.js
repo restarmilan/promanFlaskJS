@@ -78,8 +78,18 @@ export let dataHandler = {
     },
     createNewCard: function (cardTitle, boardId, statusId, callback) {
         // creates new card, saves it and calls the callback function with its data
+        this._api_get("/save-new-card/"+cardTitle+"/"+boardId+"/"+statusId, (response) => {
+            this._data = response;
+            callback(response);
+        })
     },
-    saveCardData: function() {
+    removeCard : function (cardId, callback) {
+        this._api_get("/remove-card/"+cardId, (response) => {
+            this._data = response;
+            callback(response);
+        });
+    },
+     saveCardData: function() {
         let saveData = [];
         let columns = document.querySelectorAll('.board-column-content');
         for (let column of columns) {
@@ -96,5 +106,6 @@ export let dataHandler = {
         console.log(sendData);
         dataHandler._api_post('/save-card-data', sendData, function(response){console.log(response)})
     },
+
     // here comes more features
 };
