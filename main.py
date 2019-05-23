@@ -45,11 +45,11 @@ def save_new_board(title):
     return data_handler.save_new_board(title)
 
 
-
 @app.route("/save-card-data", methods=['GET', 'POST'])
 @json_response
 def save_card_data():
     card_data = request.json['saveData']
+    print(card_data)
     data_handler.update_card_changes(card_data)
     return True
 
