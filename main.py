@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from util import json_response
 
 import data_handler
@@ -45,6 +45,15 @@ def save_new_board(title):
     return data_handler.save_new_board(title)
 
 
+
+@app.route("/save-card-data", methods=['GET', 'POST'])
+@json_response
+def save_card_data():
+    card_data = request.json['saveData']
+    data_handler.update_card_changes(card_data)
+    return True
+
+  
 @app.route("/save-new-card/<card_title>/<board_id>/<status_id>")
 @json_response
 def save_new_card(card_title, board_id, status_id):
@@ -55,6 +64,7 @@ def save_new_card(card_title, board_id, status_id):
 @json_response
 def remove_card(card_id):
     return data_handler.remove_card(card_id)
+
 
 
 def main():

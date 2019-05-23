@@ -58,6 +58,7 @@ export let dom = {
                 ${boardList}
           </div>
         `;
+        console.log(outerHtml);
         this._appendToElement(document.querySelector('#boards'), outerHtml);
         dom.addEventListenerForToggleButtons(boards);
         dom.addEventListenerForAddCardButton(boards);
@@ -126,18 +127,11 @@ export let dom = {
             ${dom.sortColumnsByID(doneCards, "done", boardNumber)}
         `;
         this._appendToElement(document.getElementById(boardID), outerHtml);
-        dom.addEventListenerForRemoveButton(cards);
-        dom.addDragula(cards);
 
-    },
-    addDragula: function (cards) {
-        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)]);
-        drake.on('drop', function (el, target, source, sibling) {
-            //call your function here
-            console.log(el.attributes.statusid.value);
-            console.log(target.id.substring(2));
-            el.setAttribute('statusId', target.id.substring(2));
-        });
+        this.createDragula(cards)
+        // here comes more features
+        dom.addEventListenerForRemoveButton(cards);
+
     },
     addEventListenerForRemoveButton: function (cards) {
         for (let card of cards) {
@@ -172,6 +166,16 @@ export let dom = {
             </div>
             `;
     },
+    createDragula: function (cards) {
+        let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)])
+        drake.on('drop', function (el, target, source, sibling) {
+            //call your function here
+            console.log(el.attributes.statusid.value);
+            console.log(target.id.substring(2));
+            el.setAttribute('statusId', target.id.substring(2));
+            dataHandler.saveCardData()
+        })
+    },
     addEventListenerForAddBoardButton: function () {
         document.getElementById("add-board").addEventListener("click", function () {
             dataHandler.createNewBoard(prompt("Enter board name !"), function () {
@@ -179,5 +183,5 @@ export let dom = {
             });
         });
 
-    }
+    },
 };
