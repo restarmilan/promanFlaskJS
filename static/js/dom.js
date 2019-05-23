@@ -79,7 +79,7 @@ export let dom = {
                 if (document.getElementById("board-" + board.id).firstChild === null) {
                     dom.loadCards(board.id);
                 } else {
-                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id), document.getElementById("board-" + board.id));
+                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id),document.getElementById("board-" + board.id));
                 }
             });
         }
@@ -153,8 +153,8 @@ export let dom = {
                 cardsByID += `
                     <div class="card" id="board-${card.board_id}-card-${card.id}" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
                         <div class="card-remove" id="remove-card-${card.id}"><i class="fas fa-trash-alt"></i></div>
-                        <div class ="card-rename" data-cardid="${cards.indexOf(card)}"><i class="fas fa-pen"></i></div>
-                        <div class="board-title" data-cardid="${cards.indexOf(card)}">${card.title}</div>              
+                        <div class ="card-rename" data-cardid="${cards.indexOf(card)}-${card.id}"><i class="fas fa-pen"></i></div>
+                        <div class="board-title" data-cardid="${cards.indexOf(card)}-${card.id}">${card.title}</div>              
                     </div>
                 `;
             }
@@ -195,6 +195,7 @@ export let dom = {
         for (let card of cardNames) {
             for (let button of renameCardButtons) {
                 if (card.dataset.cardid === button.dataset.cardid) {
+                    button.removeEventListener('click', function(){console.log('true')});
                     button.addEventListener('click', function () {
                     card.textContent = prompt('You can change your cardname here: ');
                     dataHandler.saveCardData()
