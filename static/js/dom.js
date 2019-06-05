@@ -79,7 +79,7 @@ export let dom = {
                 if (document.getElementById("board-" + board.id).firstChild === null) {
                     dom.loadCards(board.id);
                 } else {
-                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id), document.getElementById("board-" + board.id));
+                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id),document.getElementById("board-" + board.id));
                 }
             });
         }
@@ -190,7 +190,6 @@ export let dom = {
 
     },
     addEventListenerForRenameCardButtons : function(cards){
-
         let renameCardButtons = document.querySelectorAll(`.card-rename-${cards[0]['board_id']}`);
         renameCardButtons.forEach(function(renameCardButton){
             renameCardButton.addEventListener('click', function(){
