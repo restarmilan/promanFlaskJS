@@ -129,7 +129,7 @@ export let dom = {
             ${dom.sortColumnsByID(doneCards, "done", boardNumber)}
         `;
         this._appendToElement(document.getElementById(boardID), outerHtml);
-        dom.addEventListenerForRenameCardButtons();
+        dom.addEventListenerForRenameCardButtons(cards);
 
         this.createDragula(cards)
         // here comes more features
@@ -153,7 +153,7 @@ export let dom = {
                 cardsByID += `
                     <div class="card" id="board-${card.board_id}-card-${card.id}" cardId="${card.id}" boardId="${card.board_id}" statusId='${card.status_id}'>
                         <div class="card-remove" id="remove-card-${card.id}"><i class="fas fa-trash-alt"></i></div>
-                        <div class ="card-rename" data-cardid="${cards.indexOf(card)}"><i class="fas fa-pen"></i></div>
+                        <div class ="card-rename-${card.board_id}" data-cardid="${cards.indexOf(card)}"><i class="fas fa-pen"></i></div>
                         <div class="board-title" data-cardid="${cards.indexOf(card)}">${card.title}</div>              
                     </div>
                 `;
@@ -189,20 +189,16 @@ export let dom = {
         });
 
     },
-    addEventListenerForRenameCardButtons : function(){
-        let cardNames = document.getElementsByClassName('board-title');
-        let renameCardButtons = document.getElementsByClassName('card-rename');
-        for (let card of cardNames) {
-            for (let button of renameCardButtons) {
-                if (card.dataset.cardid === button.dataset.cardid) {
-                    button.addEventListener('click', function () {
-                    card.textContent = prompt('You can change your cardname here: ');
-                    dataHandler.saveCardData()
+    addEventListenerForRenameCardButtons : function(cards){
 
-                    })
-                }
-            }
-        }
+        let renameCardButtons = document.querySelectorAll(`.card-rename-${cards[0]['board_id']}`);
+        renameCardButtons.forEach(function(renameCardButton){
+            renameCardButton.addEventListener('click', function(){
+                renameCardButton.parentNode.lastElementChild.textContent =
+                    prompt('You can change your card name here: ');
+            dataHandler.saveCardData()
+            });
+        });
     },
 };
 
