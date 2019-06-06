@@ -8,6 +8,8 @@ function init() {
     dom.loadBoards();
 
     dom.addEventListenerForAddBoardButton();
+    dom.addEventListenerForLogin();
+    dom.addEventListenerForRegistration();
 
 }
 

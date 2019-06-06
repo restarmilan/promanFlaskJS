@@ -108,7 +108,38 @@ export let dataHandler = {
     },
     updateBoardName: function(data){
         this._api_post('/update-board-name',data,function(responseData){ console.log(responseData)})
+    },
+    handleUsersData: function () {
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+        let loginData = {'username': username, 'password': password};
+        return loginData
+    },
+    userRegistration: function (callback) {
+        let data = this.handleUsersData();
+        this._api_post('/registration', data, function (responseData) {
+            if (responseData === false) {
+                alert('Username is already in use')
+            }else {
+                callback('login');
+            }
+        })
+    },
+    userLogin: function (callback) {
+        let data = this.handleUsersData()
+        this._api_post('/login', data, function (responseData) {
+            if (responseData === true ) {
+                callback(data.username)
+            }else{
+                alert('Wrong username or password')
+            }
+        })
+    },
+    logout: function() {
+        this._api_get('/logout', function () {
+            let loginMessage = document.querySelector('.container-head');
+            loginMessage.lastElementChild.innerHTML = 'You are not logged in'
+        })
     }
-
     // here comes more features
 };
