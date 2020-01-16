@@ -58,7 +58,6 @@ export let dom = {
                 ${boardList}
           </div>
         `;
-        console.log(outerHtml);
         this._appendToElement(document.querySelector('#boards'), outerHtml);
         dom.addEventListenerForToggleButtons(boards);
         dom.addEventListenerForAddCardButton(boards);
@@ -79,7 +78,7 @@ export let dom = {
                 if (document.getElementById("board-" + board.id).firstChild === null) {
                     dom.loadCards(board.id);
                 } else {
-                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id),document.getElementById("board-" + board.id));
+                    dom.closeBoardContent(document.getElementsByClassName("board-column-" + board.id), document.getElementById("board-" + board.id));
                 }
             });
         }
@@ -97,7 +96,6 @@ export let dom = {
                 if (board.dataset.id === buttons.dataset.id) {
                     buttons.addEventListener('click', function () {
                         board.textContent = prompt('You can change your boardname here: ');
-                        console.log(board);
                         let data = {data: {id: board.id, title: board.textContent}}
                         dataHandler.updateBoardName(data)
                     })
@@ -175,8 +173,6 @@ export let dom = {
         let drake = dragula([document.getElementById(`${cards[0].board_id}-new`), document.getElementById(`${cards[0].board_id}-in-progress`), document.getElementById(`${cards[0].board_id}-testing`), document.getElementById(`${cards[0].board_id}-done`)])
         drake.on('drop', function (el, target, source, sibling) {
             //call your function here
-            console.log(el.attributes.statusid.value);
-            console.log(target.id.substring(2));
             el.setAttribute('statusId', target.id.substring(2));
             dataHandler.saveCardData()
         })
@@ -189,16 +185,107 @@ export let dom = {
         });
 
     },
-    addEventListenerForRenameCardButtons : function(cards){
+    addEventListenerForRenameCardButtons: function (cards) {
         let renameCardButtons = document.querySelectorAll(`.card-rename-${cards[0]['board_id']}`);
-        renameCardButtons.forEach(function(renameCardButton){
-            renameCardButton.addEventListener('click', function(){
+        renameCardButtons.forEach(function (renameCardButton) {
+            renameCardButton.addEventListener('click', function () {
                 renameCardButton.parentNode.lastElementChild.textContent =
                     prompt('You can change your card name here: ');
-            dataHandler.saveCardData()
+                dataHandler.saveCardData()
             });
         });
     },
+    addEventListenerForRegistration: function () {
+        let regButton = document.querySelector('.registration');
+        regButton.addEventListener('click', function () {
+            dom.createModal('registration');
+            $("#exampleModal").modal('show')
+        })
+    },
+    addEventListenerForLogin: function () {
+        let loginButton = document.querySelector('.login');
+        loginButton.addEventListener('click', function () {
+            if (loginButton.getAttribute('class') === 'login') {
+                console.log('ne');
+                dom.createModal('login');
+                $("#exampleModal").modal('show')
+            } else if (loginButton.getAttribute('class') === 'logout') {
+                console.log('az');
+                dataHandler.logout();
+                let logout = document.querySelector('.logout');
+                logout.setAttribute('class', 'login');
+                logout.textContent = 'Login'
+            }
+
+        })
+    },
+    loginNameWriter: function (username) {
+        let container = document.querySelector('.container-head');
+        let loginName = document.createElement('p');
+        loginName.textContent = `You are logged in as ${username}`;
+        container.appendChild(loginName);
+        let login = document.querySelector('.login');
+        login.setAttribute('class', 'logout');
+        login.innerHTML = 'Logout';
+        $("#exampleModal").modal('hide')
+
+    },
+    createModal: function (status) {
+        let modal = document.querySelector('.modal-body');
+        let modalTitle = document.querySelector('.modal-title');
+        if (status === 'login') {
+            modalTitle.innerHTML = 'Login';
+            modal.innerHTML = `        <form if="ne">
+            <div class="form-group">
+                <form>
+                    <label for="username">Username</label>
+                    <input class="form-control" id="username"
+                           placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <button id="submit_button" type="button" class="btn btn-primary">Login</button><p id="login-failed"></p>
+        </form>`
+            document.getElementById('submit_button').addEventListener('click', function () {
+                dataHandler.userLogin(dom.loginNameWriter)
+            })
+
+        } else if (status === 'registration') {
+            modalTitle.innerHTML = 'Registration';
+            modal.innerHTML = `        <form if="ne">
+            <div class="form-group">
+                <form>
+                    <label for="username">Username</label>
+                    <input class="form-control" id="username"
+                           placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <button id="submit_button" type="button" class="btn btn-primary">Registrate</button><p id="login-failed"></p>
+        </form>`
+            document.getElementById('submit_button').addEventListener('click', function () {
+                dataHandler.userRegistration(dom.createModal)
+            })
+        }
+
+
+    },
+    addEventListenerForLogout: function () {
+        let logout = document.querySelector('.logout');
+        logout.addEventListener('click', function () {
+
+            let logout = document.querySelector('.logout');
+            logout.setAttribute('class', 'login');
+            logout.innerHTML = 'Login';
+            dom.addEventListenerForLogin()
+        })
+
+    }
+
 };
 
 

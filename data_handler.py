@@ -1,5 +1,6 @@
 import persistence
-
+import connection
+import util
 
 def get_card_status(status_id):
     """
@@ -92,3 +93,33 @@ def _formate_card_data(cards_data, statuses):
 
 def update_board_name(data):
     persistence.update_board_file(data)
+
+
+@connection.connection_handler
+def verify_user_name(cursor, username):
+    cursor.execute("""SELECT user_name FROM users
+                    WHERE user_name = %(username)s""", {'username': username})
+    result = cursor.fetchall()
+    if result == []:
+        return True
+    else:
+        return False
+
+
+@connection.connection_handler
+def add_new_user(cursor, username, password):
+    hashed_password = util.hash_password(password)
+    cursor.execute("""
+                    INSERT INTO users(user_name, password)
+                    VALUES (%s, %s)
+                    """, (username, hashed_password))
+
+
+@connection.connection_handler
+def verify_login_data(cursor, username, password):
+    cursor.execute("""SELECT user_name, password FROm users
+                    WHERE user_name = %(username)s""", {'username': username})
+    result = cursor.fetchone()
+    if result is None:
+        return False
+    return util.verify_password(password, result['password'])
